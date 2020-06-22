@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csw:Record xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" 
+  xmlns:ows="http://www.opengis.net/ows" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:dct="http://purl.org/dc/terms/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <dc:identifier>2a3eaa88-aafa-11ea-83e5-2a6970beca71</dc:identifier>
+    <dc:title>Дельта Волги</dc:title>
+    <dc:language>ru</dc:language>
+    <dc:type>dataset</dc:type>
+    <dc:subject>Russia</dc:subject>
+    <dc:subject>Astrakhan</dc:subject>
+    <dc:subject>Delta</dc:subject>
+    <dc:subject>summer</dc:subject>
+    <dc:subject>august</dc:subject>
+    <dc:format>text/rtf</dc:format>
+    <dct:abstract>Снимки landsat дельты Волги</dct:abstract>
+    <dc:rights>All</dc:rights>
+    <dc:source>Снимки дельты реки Волги</dc:source>
+    <dc:format>text/rtf</dc:format>
+    <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:4326">
+      <ows:LowerCorner>44.90399 47.69525</ows:LowerCorner> 
+      <ows:UpperCorner>47.12771 50.70070</ows:UpperCorner>
+    </ows:BoundingBox>
+    <dc:URI name="download" description="Download Source Map">http://localhost:3700/src?delta.7z</dc:URI>
+    <dc:URI protocol="image/png" name="view">http://localhost:3700/img?delta.png</dc:URI>
+  </csw:Record>

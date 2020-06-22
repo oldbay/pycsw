@@ -1,0 +1,56 @@
+{
+    "server": {
+        "name": "local_server",
+        "home": "pycsw_home",
+        "url": "http://localhost:3700/csw",
+        "mimetype": "application/xml",
+        "encoding": "UTF-8",
+        "language": "en-US, ru-RU",
+        "profiles": "apiso",
+        "spatial_ranking": "true"
+    },
+    "manager": {
+        "transactions": "true", 
+        "allowed_ips": "127.0.0.1",
+        "csw_harvest_pagesize": "10"
+    },
+    "repository": {
+        "database": "sqlite:///db/pycsw.db",
+        "table": "records",
+        "mappings": "mappings"
+    },
+    "metadata:main": {
+        "identification_title": "My Catalogue",
+        "identification_abstract": "My Catalogue begin",
+        "identification_keywords": "map,metadata",
+        "identification_keywords_type": "theme", 
+        "identification_fees": "None", 
+        "identification_accessconstraints": "None", 
+        "provider_name": "My Provider", 
+        "provider_url": "http://localhost", 
+        "contact_name": "Lastname, Firstname", 
+        "contact_position": "Position Title", 
+        "contact_address": "My Adderss", 
+        "contact_city": "My City", 
+        "contact_stateorprovince": "My City Administrative Area", 
+        "contact_postalcode": "None", 
+        "contact_country": "My Country", 
+        "contact_phone": "None", 
+        "contact_fax": "None", 
+        "contact_email": "my@localhost", 
+        "contact_url": "http://localhost", 
+        "contact_hours": "None", 
+        "contact_instructions": "None",
+        "contact_role": "None"
+    },
+    "metadata:inspire": {
+        "languages_supported": "eng,ru", 
+        "default_language": "eng", 
+        "date": "None", 
+        "gemet_keywords": "None", 
+        "conformity_service": "notEvaluated", 
+        "contact_name": "None", 
+        "contact_email": "my@localhost", 
+        "temp_extent": "None" 
+    }
+}

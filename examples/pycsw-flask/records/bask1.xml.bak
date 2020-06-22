@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<csw:Record xmlns:csw="http://www.opengis.net/cat/csw/2.0.2" 
+  xmlns:ows="http://www.opengis.net/ows" 
+  xmlns:dc="http://purl.org/dc/elements/1.1/" 
+  xmlns:dct="http://purl.org/dc/terms/" 
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <dc:identifier>1f857bf2-aa60-11ea-a945-cacf44110a05</dc:identifier>
+    <dc:title>Баскунчак-апрель</dc:title>
+    <dc:language>ru</dc:language>
+    <dc:type>dataset</dc:type>
+    <dc:subject>Russia</dc:subject>
+    <dc:subject>Astrakhan</dc:subject>
+    <dc:subject>Bogdo-Baskunchak</dc:subject>
+    <dc:subject>spring</dc:subject>
+    <dc:subject>april</dc:subject>
+    <dc:format>text/rtf</dc:format>
+    <dct:abstract>Снимки landsat Богдинско-Баскунчаского заповедника за 2010 год</dct:abstract>
+    <dc:rights>All</dc:rights>
+    <dc:source>Сборник материалов по Богдинско-Баскунчакскому заповеднику</dc:source>
+    <dc:format>text/rtf</dc:format>
+    <ows:BoundingBox crs="urn:x-ogc:def:crs:EPSG:6.11:32638">
+      <ows:LowerCorner>630027.312 5328559.315</ows:LowerCorner> 
+      <ows:UpperCorner>657977.792 5354655.559</ows:UpperCorner>
+    </ows:BoundingBox>
+    <dc:URI name="download" description="Download Source Map">http://localhost:3700/src?1.tif</dc:URI>
+    <dc:URI protocol="image/png" name="view">http://localhost:3700/img?1.png</dc:URI>
+  </csw:Record>

@@ -1,0 +1,14 @@
+python
+-------
+python3-sqlalchemy
+python3-psycopg2
+
+db
+--
+postgis
+postgresql-9.6-postgis-2.3
+postgresql-9.6-postgis-2.3-scripts
+postgresql-plpython3
+
+create extension plpython3u;
+create extension postgis;

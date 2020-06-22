@@ -265,7 +265,15 @@ def getqattr(obj, name):
         try:
             result = datetime2iso8601(item)
         except AttributeError:  # item is not date(time)
-            result = item
+            if "xml" in name:
+                if isinstance(item, bytes):
+                    result = item
+                elif isinstance(item, str):
+                    result = bytes.fromhex(item[2:]).decode('utf-8')
+                else:
+                    raise Exception("Wgong XML column type")
+            else:
+                result = item
     except AttributeError:  # obj does not have a name property
         pass
     return result

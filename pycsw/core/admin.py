@@ -45,8 +45,14 @@ LOGGER = logging.getLogger(__name__)
 
 def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_functions=True, postgis_geometry_column='wkb_geometry', extra_columns=[], language='english'):
     """Setup database tables and indexes"""
-    from sqlalchemy import Column, create_engine, Integer, MetaData, \
-        Table, Text
+    from sqlalchemy import (
+        Column,
+        create_engine,
+        Integer,
+        MetaData,
+        Table,
+        Text
+    )
     from sqlalchemy.orm import create_session
 
     LOGGER.info('Creating database %s', database)
@@ -207,10 +213,11 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
 
     conn = dbase.connect()
 
+    pycsw_home = home
+    
     if create_plpythonu_functions and not create_postgis_geometry:
         if dbase.name == 'postgresql':  # create plpythonu functions within db
             LOGGER.info('Setting plpythonu functions')
-            pycsw_home = home
             function_get_anytext = '''
         CREATE OR REPLACE FUNCTION get_anytext(xml text)
         RETURNS text
@@ -219,7 +226,7 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
             sys.path.append('%s')
             from pycsw.core import util
             return util.get_anytext(xml)
-            $$ LANGUAGE plpythonu;
+            $$ LANGUAGE plpython3u;
         ''' % pycsw_home
             function_query_spatial = '''
         CREATE OR REPLACE FUNCTION query_spatial(bbox_data_wkt text, bbox_input_wkt text, predicate text, distance text)
@@ -229,7 +236,7 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
             sys.path.append('%s')
             from pycsw.core import repository
             return repository.query_spatial(bbox_data_wkt, bbox_input_wkt, predicate, distance)
-            $$ LANGUAGE plpythonu;
+            $$ LANGUAGE plpython3u;
         ''' % pycsw_home
             function_update_xpath = '''
         CREATE OR REPLACE FUNCTION update_xpath(nsmap text, xml text, recprops text)
@@ -239,7 +246,7 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
             sys.path.append('%s')
             from pycsw.core import repository
             return repository.update_xpath(nsmap, xml, recprops)
-            $$ LANGUAGE plpythonu;
+            $$ LANGUAGE plpython3u;
         ''' % pycsw_home
             function_get_geometry_area = '''
         CREATE OR REPLACE FUNCTION get_geometry_area(geom text)
@@ -249,7 +256,7 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
             sys.path.append('%s')
             from pycsw.core import repository
             return repository.get_geometry_area(geom)
-            $$ LANGUAGE plpythonu;
+            $$ LANGUAGE plpython3u;
         ''' % pycsw_home
             function_get_spatial_overlay_rank = '''
         CREATE OR REPLACE FUNCTION get_spatial_overlay_rank(target_geom text, query_geom text)
@@ -259,7 +266,7 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
             sys.path.append('%s')
             from pycsw.core import repository
             return repository.get_spatial_overlay_rank(target_geom, query_geom)
-            $$ LANGUAGE plpythonu;
+            $$ LANGUAGE plpython3u;
         ''' % pycsw_home
             conn.execute(function_get_anytext)
             conn.execute(function_query_spatial)
@@ -284,27 +291,40 @@ def setup_db(database, table, home, create_sfsql_tables=True, create_plpythonu_f
             create_column_sql = "SELECT AddGeometryColumn('%s', '%s', 4326, 'POLYGON', 2)" % (table_name, postgis_geometry_column)
         else:
             create_column_sql = "ALTER TABLE %s ADD COLUMN %s geometry(Geometry,4326);" % (table_name, postgis_geometry_column)
-        create_insert_update_trigger_sql = '''
-DROP TRIGGER IF EXISTS %(table)s_update_geometry ON %(table)s;
-DROP FUNCTION IF EXISTS %(table)s_update_geometry();
-CREATE FUNCTION %(table)s_update_geometry() RETURNS trigger AS $%(table)s_update_geometry$
-BEGIN
-    IF NEW.wkt_geometry IS NULL THEN
-        RETURN NEW;
-    END IF;
-    NEW.%(geometry)s := ST_GeomFromText(NEW.wkt_geometry,4326);
-    RETURN NEW;
-END;
-$%(table)s_update_geometry$ LANGUAGE plpgsql;
 
-CREATE TRIGGER %(table)s_update_geometry BEFORE INSERT OR UPDATE ON %(table)s
-FOR EACH ROW EXECUTE PROCEDURE %(table)s_update_geometry();
-    ''' % {'table': table_name, 'geometry': postgis_geometry_column}
+        function_get_spatial_overlay_rank = '''
+            CREATE OR REPLACE FUNCTION get_spatial_overlay_rank(target_geom text, query_geom text)
+            RETURNS text
+            AS $$
+                import sys
+                sys.path.append('%s')
+                from pycsw.core import repository
+                return repository.get_spatial_overlay_rank(target_geom, query_geom)
+                $$ LANGUAGE plpython3u;
+        ''' % pycsw_home
+
+        create_insert_update_trigger_sql = '''
+            DROP TRIGGER IF EXISTS %(table)s_update_geometry ON %(table)s;
+            DROP FUNCTION IF EXISTS %(table)s_update_geometry();
+            CREATE FUNCTION %(table)s_update_geometry() RETURNS trigger AS $%(table)s_update_geometry$
+            BEGIN
+                IF NEW.wkt_geometry IS NULL THEN
+                    RETURN NEW;
+                END IF;
+                NEW.%(geometry)s := ST_GeomFromText(NEW.wkt_geometry,4326);
+                RETURN NEW;
+            END;
+            $%(table)s_update_geometry$ LANGUAGE plpgsql;
+            
+            CREATE TRIGGER %(table)s_update_geometry BEFORE INSERT OR UPDATE ON %(table)s
+            FOR EACH ROW EXECUTE PROCEDURE %(table)s_update_geometry();
+        ''' % {'table': table_name, 'geometry': postgis_geometry_column}
 
         create_spatial_index_sql = 'CREATE INDEX %(geometry)s_idx ON %(table)s USING GIST (%(geometry)s);' \
         % {'table': table_name, 'geometry': postgis_geometry_column}
 
         conn.execute(create_column_sql)
+        conn.execute(function_get_spatial_overlay_rank)
         conn.execute(create_insert_update_trigger_sql)
         conn.execute(create_spatial_index_sql)
 
